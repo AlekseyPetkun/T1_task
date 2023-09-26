@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: T1TaskApplication
+  description: Тестовое задание от Т1 Консалтинг
+servers:
+  - url: http://localhost:8073
+    description: Generated server url
+paths:
+  /api:
+    post:
+      tags:
+        - API по работе с запросом в виде строки и вывода количества символов в порядке
+          убывания
+      summary: Получение строки с количеством символов в порядке убывания
+      description: "Нужно ввести валидную строку, которая должна состоять только и\
+        з буквенных символов"
+      operationId: getCharCount
+      parameters:
+        - name: request
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ответ получен (OK)
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: "Ответ не получен, т.к. не прошел валидацию (Bad Request)"
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: "Произошла ошибка, не зависящая от вызывающей стороны"
+          content:
+            '*/*':
+              schema:
+                type: string
+components: {}
