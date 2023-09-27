@@ -5,8 +5,10 @@ import com.github.alekseypetkun.t1_task.service.CharCountService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Бизнес-логика по работе с подсчетом и сортировкой символов в строке
@@ -24,33 +26,18 @@ public class CharCountServiceImpl implements CharCountService {
         if (!matcher.find()) {
             throw new BedStringRequestException(request);
         }
-        Map<Character, Integer> map = new HashMap<>();
 
-        char[] arrayChar = request.toCharArray();
+        String result = Arrays.stream(request.split(""))
+                .collect(
+                        Collectors.collectingAndThen(
+                                Collectors.groupingBy(Function.identity(), Collectors.counting()),
+                                map -> map.entrySet().stream()
+                                        .sorted((o1, o2) -> o2.getValue().intValue() - o1.getValue().intValue())
+                                        .map(entry -> String.join(": ", entry.getKey(), entry.getValue().toString()))
+                                        .collect(Collectors.joining(", "))
+                        )
+                );
 
-        StringBuilder sb = new StringBuilder();
-
-        for (char c : arrayChar) {
-
-            if (map.containsKey(c)) {
-                map.put(c, map.get(c) + 1);
-            } else {
-                map.put(c, 1);
-            }
-        }
-
-        List<Map.Entry<Character, Integer>> sortedMap = new ArrayList<>(map.entrySet());
-        sortedMap.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
-
-        int sum = 0;
-        for (Map.Entry<Character, Integer> entry : sortedMap) {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue());
-            sum++;
-            if (sortedMap.size() != sum) {
-                sb.append(", ");
-            }
-        }
-
-        return sb.toString();
+        return result;
     }
 }
