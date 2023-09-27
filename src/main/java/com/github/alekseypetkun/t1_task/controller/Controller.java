@@ -46,7 +46,7 @@ public class Controller {
             }
     )
     @ResponseStatus(HttpStatus.OK)
-    public String getCharCount(@RequestParam String request) {
+    public String getCharCount(@RequestParam("request") String request) {
 
         return charCountService.getCharCount(request);
     }
